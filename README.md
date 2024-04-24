@@ -20,7 +20,7 @@ Evolutionary Marketing is an innovative application that utilizes genetic algori
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/evolutionary-marketing.git
+   git clone https://github.com/richardaragon/evolutionarymarketing.git
    ```
 
 2. Install the required dependencies:
