@@ -1,0 +1,65 @@
+import random
+
+# Define the ad variations and their initial performance scores
+ad_variations = [
+    {'id': 1, 'copy': 'Ad Copy 1', 'image': 'Image 1', 'score': 0.2},
+    {'id': 2, 'copy': 'Ad Copy 2', 'image': 'Image 2', 'score': 0.1},
+    {'id': 3, 'copy': 'Ad Copy 3', 'image': 'Image 3', 'score': 0.15},
+    {'id': 4, 'copy': 'Ad Copy 4', 'image': 'Image 4', 'score': 0.25},
+]
+
+def fitness(variation):
+    # Calculate the fitness score based on the performance score
+    return variation['score']
+
+def roulette_wheel_selection(population):
+    max_value = sum(fitness(v) for v in population)
+    pick = random.uniform(0, max_value)
+    current = 0
+    for variation in population:
+        current += fitness(variation)
+        if current > pick:
+            return variation
+    return population[-1]
+
+def selection(population):
+    parent1 = roulette_wheel_selection(population)
+    parent2 = roulette_wheel_selection(population)
+    return parent1, parent2
+
+def crossover(parent1, parent2):
+    child = {'id': len(ad_variations) + 1}
+    child['copy'] = parent1['copy'] if random.random() < 0.5 else parent2['copy']
+    child['image'] = parent1['image'] if random.random() < 0.5 else parent2['image']
+    return child
+
+def mutation(variation):
+    if random.random() < 0.1:
+        variation['copy'] = f'Mutated Ad Copy {random.randint(1, 100)}'
+    if random.random() < 0.1:
+        variation['image'] = f'Mutated Image {random.randint(1, 100)}'
+    return variation
+
+def genetic_algorithm(population, generations):
+    for _ in range(generations):
+        new_population = sorted(population, key=fitness, reverse=True)[:2]  # Elitism: preserve top 2
+        while len(new_population) < len(population):
+            parent1, parent2 = selection(population)
+            child = crossover(parent1, parent2)
+            child = mutation(child)
+
+            # Simulate the performance score for the new child variation
+            child['score'] = random.random()
+            
+            new_population.append(child)
+
+        population = new_population
+
+    return population
+
+# Run the genetic algorithm for 10 generations
+optimized_variations = genetic_algorithm(ad_variations, generations=10)
+
+# Print the optimized ad variations
+for variation in optimized_variations:
+    print(f"ID: {variation['id']}, Copy: {variation['copy']}, Image: {variation['image']}, Score: {variation['score']}")
